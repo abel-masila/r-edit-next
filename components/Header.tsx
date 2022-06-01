@@ -74,7 +74,11 @@ function Header() {
               objectFit="contain"
             />
           </div>
-          <p className="text-gray-400 ">Sign Out</p>
+          <div className="flex-1  text-xs">
+            <p className="truncate">{session?.user?.name}</p>
+            <p className="text-gray-400 ">Sign Out</p>
+          </div>
+          <ChevronDownIcon className="h-5 flex-shrink-0 text-gray-400" />
         </div>
       ) : (
         <div
