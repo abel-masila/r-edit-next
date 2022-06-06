@@ -65,7 +65,6 @@ function PostBox() {
             username: session?.user?.name,
           },
         })
-        console.log(newPost)
       } else {
         //use existing subreddit
         const image = formData.postImage || ''
@@ -80,7 +79,6 @@ function PostBox() {
             username: session?.user?.name,
           },
         })
-        console.log(newPost)
       }
       setValue('postBody', '')
       setValue('postImage', '')
@@ -90,7 +88,6 @@ function PostBox() {
         id: notification,
       })
     } catch (error) {
-      console.log(error)
       toast.error('Something went!', { id: notification })
     }
   })
