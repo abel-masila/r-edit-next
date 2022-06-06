@@ -2,7 +2,12 @@ import React from 'react'
 import { useSession } from 'next-auth/react'
 import { LinkIcon, PhotographIcon } from '@heroicons/react/outline'
 import { useForm } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
 import Avatar from './Avatar'
+import { ADD_POST, ADD_SUBREDDIT } from '../graphql/mutations'
+import client from '../apollo-client'
+import { GET_SUBREDDIT_BY_TOPIC } from '../graphql/queries'
+import toast from 'react-hot-toast'
 
 type FormData = {
   postTitle: string
@@ -20,11 +25,74 @@ function PostBox() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>()
 
+  const [addPost] = useMutation(ADD_POST)
+  const [addSubreddit] = useMutation(ADD_SUBREDDIT)
+
   const onSubmit = handleSubmit(async (formData) => {
-    console.log(formData)
+    const notification = toast.loading('Creating new post...')
+    try {
+      //get topics
+      const {
+        data: { getSubredditByTopic },
+      } = await client.query({
+        query: GET_SUBREDDIT_BY_TOPIC,
+        variables: {
+          topic: formData.subreddit,
+        },
+      })
+      const subreddit = getSubredditByTopic.length > 0
+      if (!subreddit) {
+        const {
+          data: { insertSubreddit: newSubreddit },
+        } = await addSubreddit({
+          variables: {
+            topic: formData.subreddit,
+          },
+        })
+        const image = formData.postImage || ''
+        const {
+          data: { insertPost: newPost },
+        } = await addPost({
+          variables: {
+            image: image,
+            body: formData.postBody,
+            title: formData.postTitle,
+            subreddit_id: newSubreddit.id,
+            username: session?.user?.name,
+          },
+        })
+        console.log(newPost)
+      } else {
+        //use existing subreddit
+        const image = formData.postImage || ''
+        const {
+          data: { insertPost: newPost },
+        } = await addPost({
+          variables: {
+            image: image,
+            body: formData.postBody,
+            title: formData.postTitle,
+            subreddit_id: getSubredditByTopic[0].id,
+            username: session?.user?.name,
+          },
+        })
+        console.log(newPost)
+      }
+      setValue('postBody', '')
+      setValue('postImage', '')
+      setValue('postTitle', '')
+      setValue('subreddit', '')
+      toast.success('New post created!', {
+        id: notification,
+      })
+    } catch (error) {
+      console.log(error)
+      toast.error('Something went!', { id: notification })
+    }
   })
   return (
     <form
