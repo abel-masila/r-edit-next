@@ -78,7 +78,10 @@ type Query {
     @dbquery(
       type: "postgresql"
       schema: "public"
-      table: "post"
+      query: """
+      SELECT * from "post"
+      order by "created_at" desc
+      """
       configuration: "postgresql_config"
     )
   getPost(id: ID!): Post
