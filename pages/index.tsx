@@ -9,7 +9,7 @@ const Home: NextPage = () => {
   return (
     <div className="max-w-5xl my-7 mx-auto">
       <Head>
-        <title>Reddit on Web 3.0</title>
+        <title>R-eddit</title>
       </Head>
       {/* PostBox */}
       <PostBox />
