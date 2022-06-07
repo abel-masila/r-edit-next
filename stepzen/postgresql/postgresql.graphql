@@ -13,14 +13,22 @@ type Comment {
 
 type Post {
   body: String
-  commentList: [Comment] @materializer(query: "getCommentUsingPost_id")
   created_at: DateTime
   id: ID!
   image: String
   subreddit_id: ID
   title: String
   username: String
-  voteList: [Vote] @materializer(query: "getVoteUsingPost_id")
+  voteList: [Vote]
+    @materializer(
+      query: "getVoteByPostId"
+      arguments: [{ name: "post_id", field: "id" }]
+    )
+  commentList: [Comment]
+    @materializer(
+      query: "getCommentByPostId"
+      arguments: [{ name: "post_id", field: "id" }]
+    )
   subreddit: [Subreddit]
     @materializer(
       query: "getSubredditListById"
@@ -80,23 +88,19 @@ type Query {
       table: "post"
       configuration: "postgresql_config"
     )
-  getCommentUsingPost_id(id: ID!): [Comment]
+  getCommentByPostId(post_id: ID!): [Comment]
     @dbquery(
       type: "postgresql"
       query: """
-      SELECT T."created_at", T."id", T."post_id", T."text", T."username"
-        FROM "public"."comment" T
-        WHERE T."post_id" = $1
+      SELECT * FROM "comment" WHERE "post_id" = $1
       """
       configuration: "postgresql_config"
     )
-  getVoteUsingPost_id(id: ID!): [Vote]
+  getVoteByPostId(post_id: ID!): [Vote]
     @dbquery(
       type: "postgresql"
       query: """
-      SELECT T."created_at", T."id", T."post_id", T."upvote", T."username"
-        FROM "public"."vote" T
-        WHERE T."post_id" = $1
+      SELECT * FROM "vote" WHERE "post_id" = $1
       """
       configuration: "postgresql_config"
     )
