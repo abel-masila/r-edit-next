@@ -85,6 +85,16 @@ type Query {
       configuration: "postgresql_config"
     )
 
+  getPostByID(post_id: ID!): Post
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT * from "post"
+      where "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
   getPostListByTopic(topic: String!): [Post]
     @dbquery(
       type: "postgresql"
@@ -182,12 +192,7 @@ type Query {
 These are some examples of mutations generated from the schema. Feel free to modify them or add your own.
 """
 type Mutation {
-  insertComment(
-    post_id: ID!
-    text: String!
-    created_at: DateTime!
-    username: String!
-  ): Comment
+  insertComment(post_id: ID!, text: String!, username: String!): Comment
     @dbquery(
       type: "postgresql"
       schema: "public"
