@@ -7,6 +7,8 @@ import Post from '../../components/Post'
 import { GET_POST_BY_POSTID } from '../../graphql/queries'
 import { ADD_COMMENT } from '../../graphql/mutations'
 import toast from 'react-hot-toast'
+import Avatar from '../../components/Avatar'
+import Timeago from 'react-timeago'
 
 type FormData = {
   comment: string
@@ -51,8 +53,6 @@ function PostPage() {
   }
   const post: Post = data?.getPostByID
 
-  console.log(data)
-
   return (
     <div className="mx-auto my-7 max-w-5xl">
       <Post post={post} />
@@ -79,6 +79,29 @@ function PostPage() {
             Comment
           </button>
         </form>
+      </div>
+      <div className="-my-5 rounded-b-md border border-t-0 border-gray-300 bg-white px-10 py-5 ">
+        <hr className="py-2" />
+        {post?.commentList.map((comment) => (
+          <div
+            key={comment.id}
+            className="relative flex items-center space-x-2 space-y-5"
+          >
+            <hr className="absolute top-10 h-16 border left-7 z-0 " />
+            <div className="z-50">
+              <Avatar seed={comment.username} />
+            </div>
+            <div className="flex flex-col">
+              <p className="py-2 tex-xs text-gray-400">
+                <span className="font-semibold  text-gray-600">
+                  {comment.username}
+                </span>{' '}
+                <Timeago date={comment.created_at} />
+              </p>
+              <p className="">{comment.text}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
