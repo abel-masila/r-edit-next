@@ -52,7 +52,7 @@ type Vote {
       arguments: [{ name: "id", field: "post_id" }]
     )
   post_id: ID
-  upvote: Int
+  upvote: Boolean
   username: String
 }
 
@@ -247,12 +247,7 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
-  insertVote(
-    post_id: ID!
-    created_at: DateTime!
-    upvote: Int!
-    username: String!
-  ): Vote
+  insertVote(post_id: ID!, upvote: Boolean!, username: String!): Vote
     @dbquery(
       type: "postgresql"
       schema: "public"
