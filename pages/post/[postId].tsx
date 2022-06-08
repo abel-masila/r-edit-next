@@ -73,6 +73,7 @@ function PostPage() {
             className="h-24 rounded-md border border-gray-200 p-2 pl-4 outline-none disabled:bg-gray-50"
           ></textarea>
           <button
+            disabled={!session}
             type="submit"
             className="rounded-full bg-red-500 p-3 font-semibold text-white disabled:bg-gray-200"
           >
